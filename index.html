@@ -287,17 +287,19 @@ function encodeState(){
 var fields={};
 FIELDS.forEach(function(f,i){var el=document.getElementById('f'+i);if(el.value)fields['f'+i]=el.value});
 var sigs=sigEls.map(function(s){
-var ir=bg.getBoundingClientRect(),br=imgBox.getBoundingClientRect(),er=s.el.getBoundingClientRect();
-return{sd:s.sd,l:(er.left-ir.left)/ir.width,t:(er.top-ir.top)/ir.height,w:er.width/ir.width,h:er.height/ir.height};
+var ir=bg.getBoundingClientRect(),er=s.el.getBoundingClientRect();
+var cs=s.sd.s.map(function(sk){var p=sk.p.slice();for(var i=p.length-1;i>=2;i--)p[i]-=p[i-2];var o={p:p};if(sk.c!=='#1a1a1a')o.c=sk.c;if(sk.w!==2.5)o.w=sk.w;return o});
+return{sd:{w:s.sd.w,h:s.sd.h,s:cs},l:Math.round((er.left-ir.left)/ir.width*1e4)/1e4,t:Math.round((er.top-ir.top)/ir.height*1e4)/1e4,w:Math.round(er.width/ir.width*1e4)/1e4,h:Math.round(er.height/ir.height*1e4)/1e4};
 });
-return JSON.stringify({f:fields,s:sigs});
+return JSON.stringify({v:2,f:fields,s:sigs});
 }
-function recreateSig(sd){
+function recreateSig(sd,v){
 var c=document.createElement('canvas');c.width=sd.w;c.height=sd.h;
 var ctx=c.getContext('2d');
 if(sd.s)sd.s.forEach(function(sk){
 var p=sk.p;if(p.length<2)return;
-ctx.strokeStyle=sk.c;ctx.lineWidth=sk.w;ctx.lineCap='round';ctx.lineJoin='round';
+if(v>=2)for(var i=2;i<p.length;i++)p[i]+=p[i-2];
+ctx.strokeStyle=sk.c||'#1a1a1a';ctx.lineWidth=sk.w||2.5;ctx.lineCap='round';ctx.lineJoin='round';
 ctx.beginPath();ctx.moveTo(p[0],p[1]);
 for(var i=2;i<p.length-2;i+=2){ctx.quadraticCurveTo(p[i],p[i+1],(p[i]+p[i+2])/2,(p[i+1]+p[i+3])/2)}
 ctx.lineTo(p[p.length-2],p[p.length-1]);ctx.stroke();
@@ -308,7 +310,7 @@ function restoreState(st){
 if(!st)return;
 if(st.f)Object.keys(st.f).forEach(function(k){var el=document.getElementById(k);if(el)el.value=st.f[k]});
 if(st.s)st.s.forEach(function(sig){
-var url=sig.sd?recreateSig(sig.sd):sig.url;
+var url=sig.sd?recreateSig(sig.sd,st.v||1):sig.url;
 var d=document.createElement('div');d.className='sig-el';
 var im=document.createElement('img');im.src=url;d.appendChild(im);
 var rz=document.createElement('div');rz.className='rz';d.appendChild(rz);
@@ -335,8 +337,9 @@ function checkUrlState(){
 if(stateLoaded)return;
 if(!bg.offsetWidth)return;
 var h=location.hash;
-if(h.indexOf('d=')<0)return;
-var raw=h.substring(h.indexOf('d=')+2);
+if(h.length<2)return;
+var raw=h.substring(1);
+if(raw.indexOf('d=')===0)raw=raw.substring(2);
 try{var d=decodeURIComponent(raw);if(d!==raw)raw=d}catch(e){}
 try{
 var st=decodeState(raw);
@@ -348,7 +351,8 @@ else{shareInfo.innerHTML='<b style="color:#e74c3c">❌ 链接数据为空，请�
 shareBtn.onclick=function(){
 var json=encodeState();
 var enc=LZString.compressToBase64(json).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
-var url=location.origin+location.pathname+'#d='+enc;
+var base=(location.origin+location.pathname).replace(/index\.html$/,'');
+var url=base+'#'+enc;
 shareBox.style.display='block';
 shareUrl.value=url;
 linkInfo.textContent='URL长度: '+url.length+' 字符。复制此链接发给对方。';
