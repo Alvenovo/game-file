@@ -364,8 +364,8 @@ function dl(c){var a=document.createElement('a');a.download='signed.png';a.href=
 };
 
 redraw();
-bg.onload=function(){adjustFonts();checkUrlState();autoHighlight()};
-if(bg.complete&&bg.naturalWidth>0){adjustFonts();checkUrlState();autoHighlight()}
+bg.onload=function(){adjustFonts();checkUrlState();autoHighlight();setTimeout(adjustFonts,300)};
+if(bg.complete&&bg.naturalWidth>0){adjustFonts();checkUrlState();autoHighlight();setTimeout(adjustFonts,300)}
 function autoHighlight(){
 if(!hlOn){hlBtn.click()}
 }
