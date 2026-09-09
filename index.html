@@ -20,7 +20,7 @@ main{flex:1;display:flex;gap:12px;padding:12px;overflow:auto}
 .doc-panel h2{font-size:13px;color:#888;margin-bottom:8px}
 .img-container{flex:1;overflow:auto;border:1px solid #eee;border-radius:6px;background:#fafafa;position:relative}
 .img-bg{position:relative;width:100%;min-width:600px;aspect-ratio:1276/1344;background-size:100% 100%;background-repeat:no-repeat}
-.tf{position:absolute;border:none;background:rgba(255,235,59,.15);outline:none;text-align:center;font-family:"Microsoft YaHei","SimSun",serif;color:#1a1a1a;border-bottom:1px solid rgba(255,193,7,.4);transition:background .2s,border-color .2s;line-height:1;padding:0;margin:0;border-radius:2px}
+.tf{position:absolute;border:none;background:rgba(255,235,59,.15);outline:none;text-align:center;font-family:"Microsoft YaHei","SimSun",serif;color:#1a1a1a;box-shadow:0 1px 0 rgba(255,193,7,.4);transition:background .2s;line-height:1;padding:0;margin:0;border-radius:2px}
 .tf:hover{background:rgba(255,235,59,.4);border-bottom:2px solid #ffc107}
 .tf:focus{border-bottom:2px solid #4a90d9;background:rgba(74,144,217,.12)}
 .tf.highlight{background:rgba(255,235,59,.3);border-bottom:1px solid #ffc107}
@@ -181,7 +181,7 @@ var w=bg.offsetWidth;if(!w)return;
 var h=bg.offsetHeight;
 var scale=w/IMG_W;
 var fs=Math.max(14,20*scale);
-var fH=fs*1.6;
+var fH=fs;
 [].forEach.call(bg.querySelectorAll('.tf'),function(el,i){
 var f=FIELDS[i];if(!f)return;
 el.style.fontSize=fs+'px';el.style.height=fH+'px';
