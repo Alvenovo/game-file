@@ -186,7 +186,7 @@ var fH=fs*1.6;
 var f=FIELDS[i];if(!f)return;
 el.style.fontSize=fs+'px';el.style.height=fH+'px';
 el.style.left=f[0]+'%';el.style.width=f[2]+'%';
-el.style.top=((f[1]/100*h)-(fH/2))+'px';
+el.style.top=((f[1]/100*h)-fH)+'px';
 });
 overlay.style.width='100%';overlay.style.height='100%';overlay.style.left='0';overlay.style.top='0';
 }
@@ -344,7 +344,7 @@ var fs=parseFloat(el.style.fontSize)||14,scale=IMG_W/bg.offsetWidth,cfs=fs*scale
 var x=(f[0]/100)*IMG_W+(f[2]/100)*IMG_W*0.5;
 var y=(f[1]/100)*IMG_H;
 ctx.font=cfs+'px "Microsoft YaHei","SimSun",serif';ctx.fillStyle='#1a1a1a';
-ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(txt,x,y);
+ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText(txt,x,y);
 });
 var ir=bg.getBoundingClientRect(),sx=IMG_W/ir.width,sy=IMG_H/ir.height;
 var pending=sigEls.length;
