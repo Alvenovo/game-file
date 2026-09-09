@@ -232,7 +232,7 @@ var p=4;mx=Math.max(0,mx-p);my=Math.max(0,my-p);Mx=Math.min(pad.width,Mx+p);My=M
 var w=Mx-mx,h=My-my;if(w<5||h<5)return null;
 var c=document.createElement('canvas');c.width=Math.ceil(w);c.height=Math.ceil(h);
 var ctx=c.getContext('2d');ctx.translate(-mx,-my);strokes.forEach(function(s){drawStroke(ctx,s)});
-return{url:c.toDataURL('image/png'),w:c.width,h:c.height};
+return{url:c.toDataURL('image/png'),w:c.width,h:c.height,ox:mx,oy:my};
 }
 
 // Place signature
@@ -249,7 +249,7 @@ d.style.width=tw+'px';d.style.height=(tw*t.h/t.w)+'px';
 d.style.left=((imgRect.width-tw)*0.92)+'px';
 d.style.top=((imgRect.height-tw*t.h/t.w)*0.92)+'px';
 overlay.appendChild(d);
-var obj={el:d,url:t.url};sigEls.push(obj);
+var obj={el:d,url:t.url,sd:{w:t.w,h:t.h,s:strokes.map(function(s){var p=[];for(var j=0;j<s.length;j++){p.push(Math.round(s[j].x-t.ox));p.push(Math.round(s[j].y-t.oy))}return{c:s[0].c,w:s[0].w,p:p}})}};sigEls.push(obj);
 sigEls.forEach(function(s){s.el.classList.remove('sel')});obj.el.classList.add('sel');
 bindSigEl(d,obj);
 strokes=[];redraw();
@@ -287,24 +287,37 @@ var fields={};
 FIELDS.forEach(function(f,i){var el=document.getElementById('f'+i);if(el.value)fields['f'+i]=el.value});
 var sigs=sigEls.map(function(s){
 var ir=bg.getBoundingClientRect(),br=imgBox.getBoundingClientRect(),er=s.el.getBoundingClientRect();
-return{url:s.url,l:(er.left-ir.left)/ir.width,t:(er.top-ir.top)/ir.height,w:er.width/ir.width,h:er.height/ir.height};
+return{sd:s.sd,l:(er.left-ir.left)/ir.width,t:(er.top-ir.top)/ir.height,w:er.width/ir.width,h:er.height/ir.height};
 });
 return JSON.stringify({f:fields,s:sigs});
+}
+function recreateSig(sd){
+var c=document.createElement('canvas');c.width=sd.w;c.height=sd.h;
+var ctx=c.getContext('2d');
+if(sd.s)sd.s.forEach(function(sk){
+var p=sk.p;if(p.length<2)return;
+ctx.strokeStyle=sk.c;ctx.lineWidth=sk.w;ctx.lineCap='round';ctx.lineJoin='round';
+ctx.beginPath();ctx.moveTo(p[0],p[1]);
+for(var i=2;i<p.length-2;i+=2){ctx.quadraticCurveTo(p[i],p[i+1],(p[i]+p[i+2])/2,(p[i+1]+p[i+3])/2)}
+ctx.lineTo(p[p.length-2],p[p.length-1]);ctx.stroke();
+});
+return c.toDataURL('image/png');
 }
 function restoreState(st){
 if(!st)return;
 if(st.f)Object.keys(st.f).forEach(function(k){var el=document.getElementById(k);if(el)el.value=st.f[k]});
 if(st.s)st.s.forEach(function(sig){
+var url=sig.sd?recreateSig(sig.sd):sig.url;
 var d=document.createElement('div');d.className='sig-el';
-var im=document.createElement('img');im.src=sig.url;d.appendChild(im);
+var im=document.createElement('img');im.src=url;d.appendChild(im);
 var rz=document.createElement('div');rz.className='rz';d.appendChild(rz);
 var del=document.createElement('div');del.className='del';del.innerHTML='×';d.appendChild(del);
-var ir=bg.getBoundingClientRect(),br=imgBox.getBoundingClientRect();
+var ir=bg.getBoundingClientRect();
 d.style.left=(sig.l*ir.width)+'px';
 d.style.top=(sig.t*ir.height)+'px';
 d.style.width=(sig.w*ir.width)+'px';d.style.height=(sig.h*ir.height)+'px';
 overlay.appendChild(d);
-var obj={el:d,url:sig.url};sigEls.push(obj);bindSigEl(d,obj);
+var obj={el:d,url:url,sd:sig.sd};sigEls.push(obj);bindSigEl(d,obj);
 });
 }
 var stateLoaded=false;
