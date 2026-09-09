@@ -313,23 +313,24 @@ var im=document.createElement('img');im.src=url;d.appendChild(im);
 var rz=document.createElement('div');rz.className='rz';d.appendChild(rz);
 var del=document.createElement('div');del.className='del';del.innerHTML='×';d.appendChild(del);
 var ir=bg.getBoundingClientRect();
-d.style.left=(sig.l*ir.width)+'px';
-d.style.top=(sig.t*ir.height)+'px';
-d.style.width=(sig.w*ir.width)+'px';d.style.height=(sig.h*ir.height)+'px';
+d.style.left=(sig.l*100)+'%';
+d.style.top=(sig.t*100)+'%';
+d.style.width=(sig.w*100)+'%';d.style.height=(sig.h*100)+'%';
 overlay.appendChild(d);
 var obj={el:d,url:url,sd:sig.sd};sigEls.push(obj);bindSigEl(d,obj);
 });
 }
 var stateLoaded=false;
 function checkUrlState(){
-if(stateLoaded)return;stateLoaded=true;
+if(stateLoaded)return;
+if(!bg.offsetWidth)return;
 var h=location.hash;
 if(h.indexOf('d=')>=0){
 var enc=h.substring(h.indexOf('d=')+2);
 try{
 var json=decodeURIComponent(escape(atob(enc)));
 var st=JSON.parse(json);
-if(st){restoreState(st);shareInfo.innerHTML='<b style="color:#27ae60">✅ 已加载对方填写的内容</b><br>你可以继续签字，然后生成新的分享链接或直接导出图片。';}
+if(st){stateLoaded=true;restoreState(st);shareInfo.innerHTML='<b style="color:#27ae60">✅ 已加载对方填写的内容</b><br>你可以继续签字，然后生成新的分享链接或直接导出图片。';}
 }catch(e){console.error(e)}
 }
 }
