@@ -351,7 +351,7 @@ else{shareInfo.innerHTML='<b style="color:#e74c3c">❌ 链接数据为空，请�
 shareBtn.onclick=function(){
 var json=encodeState();
 var enc=LZString.compressToBase64(json).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
-var base=(location.origin+location.pathname).replace(/index\.html$/,'');
+var base=(location.protocol==='https:'&&location.hostname!=='localhost')?(location.origin+location.pathname).replace(/index\.html$/,''):'https://alvenovo.github.io/game-file/';
 var url=base+'#'+enc;
 shareBox.style.display='block';
 shareUrl.value=url;
