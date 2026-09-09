@@ -21,7 +21,7 @@ main{flex:1;display:flex;gap:12px;padding:12px;overflow:auto}
 .img-container{flex:1;overflow:auto;border:1px solid #eee;border-radius:6px;background:#fafafa}
 .img-inner{position:relative;display:inline-block;min-width:100%}
 .img-container img.bg{min-width:600px;width:100%;height:auto;display:block;user-select:none;-webkit-user-drag:none}
-.tf{position:absolute;border:none;background:rgba(255,235,59,.15);outline:none;text-align:center;font-family:"Microsoft YaHei","SimSun",serif;color:#1a1a1a;border-bottom:1px solid rgba(255,193,7,.4);transition:all .2s;min-height:20px;min-width:50px;border-radius:2px}
+.tf{position:absolute;border:none;background:rgba(255,235,59,.15);outline:none;text-align:center;font-family:"Microsoft YaHei","SimSun",serif;color:#1a1a1a;border-bottom:1px solid rgba(255,193,7,.4);transition:all .2s;min-height:20px;border-radius:2px}
 .tf:hover{background:rgba(255,235,59,.4);border-bottom:2px solid #ffc107}
 .tf:focus{border-bottom:2px solid #4a90d9;background:rgba(74,144,217,.12)}
 .tf.highlight{background:rgba(255,235,59,.3);border-bottom:1px solid #ffc107}
@@ -153,10 +153,8 @@ hlBtn.textContent=hlOn?'📍 隐藏编辑位置':'📍 显示编辑位置';
 
 // 下划线位置 (x%, y_offset%, w%, isLarge)
 var FIELDS=[
-[37.93,4.76,3.21,false],[58.78,6.10,3.68,false],[37.62,7.37,3.76,false],
 [38.48,17.04,7.76,false],[48.67,17.04,6.58,false],[57.68,17.04,6.51,false],
 [61.83,21.95,7.37,false],[74.22,21.95,8.54,false],
-[67.48,74.63,17.87,true],[67.48,81.77,17.95,true],
 [64.18,90.03,5.33,false],[72.03,90.03,4.31,false],[78.76,90.03,4.23,false]
 ];
 
@@ -185,7 +183,7 @@ function adjustFonts(){
 var imgEl=imgInner.querySelector('.bg');
 var w=imgEl.offsetWidth;if(!w)return;
 var scale=w/IMG_W;
-var fs=Math.max(12,12*scale);
+var fs=Math.max(14,20*scale);
 [].forEach.call(imgInner.querySelectorAll('.tf'),function(el){
 el.style.fontSize=fs+'px';el.style.height=(fs*1.6)+'px';
 });
