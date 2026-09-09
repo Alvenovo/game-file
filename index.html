@@ -153,9 +153,9 @@ hlBtn.textContent=hlOn?'📍 隐藏编辑位置':'📍 显示编辑位置';
 
 // 下划线位置 (x%, y_offset%, w%, isLarge)
 var FIELDS=[
-[38.48,17.04,7.76,false],[48.67,17.04,6.58,false],[57.68,17.04,6.51,false],
-[61.83,21.95,7.37,false],[74.22,21.95,8.54,false],
-[64.18,90.03,5.33,false],[72.03,90.03,4.31,false],[78.76,90.03,4.23,false]
+[38.48,18.53,7.76],[48.67,18.53,6.58],[57.68,18.53,6.51],
+[61.83,23.44,7.37],[74.22,23.44,8.54],
+[64.18,91.52,5.33],[72.03,91.52,4.31],[78.76,91.52,4.23]
 ];
 
 var penColor='#1a1a1a',penW=2.5,drawing=false,strokes=[],cur=[],sigEls=[];
@@ -182,16 +182,19 @@ imgInner.appendChild(inp);
 function adjustFonts(){
 var imgEl=imgInner.querySelector('.bg');
 var w=imgEl.offsetWidth;if(!w)return;
+var h=imgEl.offsetHeight;
 var scale=w/IMG_W;
 var fs=Math.max(14,20*scale);
-[].forEach.call(imgInner.querySelectorAll('.tf'),function(el){
-el.style.fontSize=fs+'px';el.style.height=(fs*1.6)+'px';
+var fH=fs*1.6;
+[].forEach.call(imgInner.querySelectorAll('.tf'),function(el,i){
+var f=FIELDS[i];if(!f)return;
+el.style.fontSize=fs+'px';el.style.height=fH+'px';
+el.style.left=f[0]+'%';el.style.width=f[2]+'%';
+// Center text ON the underline
+var yPx=(f[1]/100)*h;
+el.style.top=(yPx-fH/2)+'px';
 });
-// Overlay matches image inside imgInner
-overlay.style.width='100%';
-overlay.style.height='100%';
-overlay.style.left='0';
-overlay.style.top='0';
+overlay.style.width='100%';overlay.style.height='100%';overlay.style.left='0';overlay.style.top='0';
 }
 bg.onload=adjustFonts;
 window.addEventListener('resize',adjustFonts);
@@ -341,11 +344,11 @@ var c=document.createElement('canvas');c.width=IMG_W;c.height=IMG_H;
 var ctx=c.getContext('2d');ctx.drawImage(bg,0,0);
 FIELDS.forEach(function(f,i){
 var el=document.getElementById('f'+i),txt=el.value;if(!txt)return;
-var fs=parseFloat(el.style.fontSize)||12,scale=IMG_W/bg.offsetWidth,cfs=fs*scale;
+var fs=parseFloat(el.style.fontSize)||14,scale=IMG_W/bg.offsetWidth,cfs=fs*scale;
 var x=(f[0]/100)*IMG_W+(f[2]/100)*IMG_W*0.5;
-var y=(f[1]/100)*IMG_H+(f[3]?40:20)*scale;
+var y=(f[1]/100)*IMG_H;
 ctx.font=cfs+'px "Microsoft YaHei","SimSun",serif';ctx.fillStyle='#1a1a1a';
-ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText(txt,x,y);
+ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(txt,x,y);
 });
 var ir=bg.getBoundingClientRect(),sx=IMG_W/ir.width,sy=IMG_H/ir.height;
 var pending=sigEls.length;
